@@ -9,7 +9,7 @@ class LogseqDbNightlyDownloadStrategy < CurlDownloadStrategy
       raise CurlDownloadStrategyError.new(url, "Cannot determine Logseq architecture from placeholder URL.")
     end
 
-    release = JSON.parse(Utils::Curl.curl_output(API_URL).stdout)
+    release = JSON.parse(::Utils::Curl.curl_output(API_URL).stdout)
     asset = release.fetch("assets").find do |candidate|
       candidate.fetch("name").match?(/\ALogseq-darwin-#{arch}-.+\.dmg\z/)
     end

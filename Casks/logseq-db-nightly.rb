@@ -1,7 +1,5 @@
-require "json"
-
 class LogseqDbNightlyDownloadStrategy < CurlDownloadStrategy
-  API_URL = "https://api.github.com/repos/logseq/logseq/releases/tags/nightly"
+  ASSETS_URL = "https://github.com/logseq/logseq/releases/expanded_assets/nightly"
 
   def initialize(url, name, version, **meta)
     arch = url[%r{/Logseq-darwin-(arm64|x64)-latest\.dmg\z}, 1]
@@ -9,15 +7,13 @@ class LogseqDbNightlyDownloadStrategy < CurlDownloadStrategy
       raise CurlDownloadStrategyError.new(url, "Cannot determine Logseq architecture from placeholder URL.")
     end
 
-    release = JSON.parse(::Utils::Curl.curl_output(API_URL).stdout)
-    asset = release.fetch("assets").find do |candidate|
-      candidate.fetch("name").match?(/\ALogseq-darwin-#{arch}-.+\.dmg\z/)
-    end
-    if asset.nil?
-      raise CurlDownloadStrategyError.new(API_URL, "Cannot find Logseq nightly macOS #{arch} DMG.")
+    html = ::Utils::Curl.curl_output("--fail", "--location", ASSETS_URL).stdout
+    href = html[%r{href="(/logseq/logseq/releases/download/nightly/Logseq-darwin-#{arch}-[^"]*nightly\.\d{8}\.dmg)"}, 1]
+    if href.nil?
+      raise CurlDownloadStrategyError.new(ASSETS_URL, "Cannot find Logseq nightly macOS #{arch} DMG.")
     end
 
-    super(asset.fetch("browser_download_url"), name, version, **meta)
+    super("https://github.com#{href}", name, version, **meta)
   end
 end
 

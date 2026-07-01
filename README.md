@@ -6,7 +6,7 @@ Personal Homebrew tap for Logseq's DB/nightly desktop build.
 
 ```sh
 brew tap zhdi-1/logseq-nightly
-brew install --cask logseq-db-nightly
+brew install --cask logseq@nightly
 ```
 
 This cask conflicts with Homebrew's stable `logseq` cask because both install
@@ -20,7 +20,7 @@ The cask tracks Logseq's moving `nightly` release, so it uses
 To include it in plain `brew upgrade`, add this to your zsh environment:
 
 ```sh
-export HOMEBREW_UPGRADE_GREEDY_CASKS="logseq-db-nightly"
+export HOMEBREW_UPGRADE_GREEDY_CASKS="logseq@nightly"
 ```
 
 If `HOMEBREW_UPGRADE_GREEDY_CASKS` already contains other casks, keep it as a
